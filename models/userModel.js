@@ -29,6 +29,7 @@ const user = new mongoose.Schema({
     required: [true, 'need a password'],
     minlength: 8,
     maxlength: 16,
+    select: false,
   },
   // 只在创建密码时验证,update时无效
   passwordConfirm: {
@@ -39,11 +40,18 @@ const user = new mongoose.Schema({
     },
     message: 'password is not same',
   },
+  lastLogin: {
+    type: Date,
+    default: Date.now(),
+  },
 });
+user.methods.loginConfirm = async function (currentPassword, password) {
+  return await bcrypt.compare(currentPassword, password);
+};
 
-user.pre('save', function (next) {
+user.pre('save', async function (next) {
   if (!this.isModified('password')) return next(); //未修改密码时不再次加密
-  this.password = bcrypt.hash(this.password, 12); //加密
+  this.password = await bcrypt.hash(this.password, 12); //加密
   this.passwordConfirm = undefined; //数据库删除二次确认
   next();
 });

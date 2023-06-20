@@ -21,6 +21,7 @@ module.exports = class AppError extends Error {
       const rawMsg = `${Object.keys(err.keyValue).join(' ')}重复`;
       return new AppError(rawMsg, 400, true);
     }
+
     return new AppError('SERVER ERROR', 500, false);
   }
 };

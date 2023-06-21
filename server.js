@@ -25,5 +25,5 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
   console.log('🤡 unhandledRejection', err.message);
   app.delete();
-  setTimeout(() => process.exit(1), 1000);
+  setTimeout(() => process.exit(0), 1000);
 });

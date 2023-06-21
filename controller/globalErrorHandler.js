@@ -6,21 +6,16 @@ module.exports.DBerrorDeliver = (fn) => (req, res, next) => {
 };
 
 function devErrorsHandler(err, res) {
-  // console.log(err);
-  // res.status(404).json({
-  //   message: err,
-  // });
-  // 临时
-
   if (err.operation === true) {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
+      stack: err.stack,
     });
   } else {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: 'SERVER ERROR',
+    console.log(err);
+    res.status(500).json({
+      err: err,
     });
   }
 }
@@ -35,12 +30,7 @@ function proErrorsHandler(err, res) {
 }
 
 module.exports.unexpectUrlErrorHandler = (err, req, res, next) => {
-  // err.statusCode = err.statusCode || 500;
-  // err.status = err.status || 'server error';
-  // res.status(200).json({
-  //   status: err.status,
-  //   message: err,
-  // });
+  console.log('👩‍🏭Global Error Handler');
   const globalERR = err instanceof AppError ? err : AppError.creatErr(err);
   if (process.env.NODE_ENV === 'development') {
     devErrorsHandler(globalERR, res);

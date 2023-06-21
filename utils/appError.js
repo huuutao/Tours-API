@@ -8,19 +8,21 @@ module.exports = class AppError extends Error {
   }
 
   static creatErr(err) {
-    if (err.name === 'CastError') {
-      const rawMsg = `${err.value}是无效路径`;
-      return new AppError(rawMsg, 401, true);
+    let rawMsg = '';
+    switch (err.name) {
+      case 'CastError':
+        rawMsg = `${err.value}是无效路径`;
+        return new AppError(rawMsg, 401, true);
+      case 'ValidationError':
+        const val = Object.keys(err.errors).join(',');
+        rawMsg = `${val}是无效值`;
+        return new AppError(rawMsg, 400, true);
+      case 'TokenExpiredError':
+        return new AppError('登陆已过期,请重新登陆', 400, true);
+      case 'MongoServerError':
+        return new AppError('该用户名已存在', 400, true);
+      default:
+        return err;
     }
-    if (err.name === 'ValidationError') {
-      const val = Object.keys(err.errors).join(',');
-      const rawMsg = `${val}是无效值`;
-      return new AppError(rawMsg, 400, true);
-    }
-    if (err.code === 11000) {
-      const rawMsg = `${Object.keys(err.keyValue).join(' ')}重复`;
-      return new AppError(rawMsg, 400, true);
-    }
-    return new AppError('SERVER ERROR', 500, false);
   }
 };

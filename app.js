@@ -9,7 +9,7 @@ const { unexpectUrlErrorHandler } = require('./controller/globalErrorHandler');
 const app = express();
 // middleware
 app.use(express.json());
-app.use(unexpectUrlErrorHandler);
+
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
@@ -24,4 +24,5 @@ app.all('*', (req, res, next) => {
   next(err);
 });
 
+app.use(unexpectUrlErrorHandler); //放在路由之后
 module.exports = app;
